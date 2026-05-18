@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 173 80% 27%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 210 40% 95%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 45 93% 47%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 173 80% 27%;
+    --chart-1: 173 80% 27%;
+    --chart-2: 45 93% 47%;
+    --chart-3: 213 94% 68%;
+    --chart-4: 336 84% 57%;
+    --chart-5: 262 83% 58%;
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 222 47% 8%;
+    --foreground: 210 40% 98%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 178 84% 44%;
+    --primary-foreground: 222 47% 10%;
+    --secondary: 217 33% 18%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217 33% 16%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 45 93% 55%;
+    --accent-foreground: 222 47% 10%;
+    --destructive: 0 72% 51%;
+    --border: 217 33% 20%;
+    --input: 217 33% 20%;
+    --ring: 178 84% 44%;
+    --chart-1: 178 84% 44%;
+    --chart-2: 45 93% 55%;
+    --chart-3: 205 86% 64%;
+    --chart-4: 318 76% 60%;
+    --chart-5: 262 83% 67%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply min-h-screen bg-background text-foreground antialiased;
+    background-image:
+      radial-gradient(circle at top left, rgba(20, 184, 166, 0.08), transparent 22%),
+      radial-gradient(circle at bottom right, rgba(251, 191, 36, 0.09), transparent 18%);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display tracking-tight;
+  }
+
+  a {
+    @apply transition-colors;
+  }
+}
+
+@layer utilities {
+  .page-shell {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .section-space {
+    @apply py-10 sm:py-14 lg:py-16;
+  }
+}
