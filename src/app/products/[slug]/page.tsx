@@ -10,6 +10,7 @@ import { ReviewList } from "@/features/reviews/components/review-list";
 import { ExplainedSpecifications } from "@/features/specifications/components/explained-specifications";
 import { Breadcrumbs } from "@/shared/components/ui/breadcrumbs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { getValidImageSources } from "@/shared/utils/image-sources";
 
 export const dynamic = "force-dynamic";
 
@@ -24,13 +25,14 @@ export async function generateMetadata({
 
   try {
     const product = await serverApi.productBySlug(slug);
+    const productImages = getValidImageSources(product.images);
     return {
       title: product.name,
       description: product.shortDescription,
       openGraph: {
         title: product.name,
         description: product.shortDescription,
-        images: product.images[0] ? [product.images[0]] : [],
+        images: productImages[0] ? [productImages[0]] : [],
       },
     };
   } catch {
@@ -49,6 +51,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   } catch {
     notFound();
   }
+  const productImages = getValidImageSources(product.images);
 
   const [explained, performance, alternatives, reviews] = await Promise.all([
     serverApi.explainedSpecifications(product.id).catch(() => []),
@@ -71,9 +74,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <div className="space-y-4">
           <div className="grid gap-4 md:grid-cols-[1fr_0.32fr]">
             <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] border border-border/70 bg-muted">
-              {product.images[0] ? (
+              {productImages[0] ? (
                 <Image
-                  src={product.images[0]}
+                  src={productImages[0]}
                   alt={product.name}
                   fill
                   className="object-cover"
@@ -81,7 +84,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               ) : null}
             </div>
             <div className="grid gap-4">
-              {product.images.slice(1, 4).map((image, index) => (
+              {productImages.slice(1, 4).map((image, index) => (
                 <div
                   key={`${image}-${index}`}
                   className="relative aspect-square overflow-hidden rounded-[1.5rem] border border-border/70 bg-muted"

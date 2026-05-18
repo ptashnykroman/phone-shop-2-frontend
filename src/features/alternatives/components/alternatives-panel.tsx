@@ -65,8 +65,14 @@ export function AlternativesPanel({
                           variant="outline"
                           className="flex-1"
                           onClick={() => {
-                            compareStore.addProduct(alternatives.sourceProduct.id);
-                            compareStore.addProduct(item.product.id);
+                            compareStore.addProduct(
+                              alternatives.sourceProduct.id,
+                              alternatives.sourceProduct.name,
+                            );
+                            compareStore.addProduct(
+                              item.product.id,
+                              item.product.name,
+                            );
                           }}
                         >
                           <Scale className="h-4 w-4" />

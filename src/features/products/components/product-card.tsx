@@ -22,7 +22,9 @@ import {
   CardFooter,
   CardHeader,
 } from "@/shared/components/ui/card";
+import { toFiniteNumber } from "@/shared/api/product-normalizers";
 import { cn } from "@/shared/lib/cn";
+import { getValidImageSources } from "@/shared/utils/image-sources";
 import { formatPrice } from "@/shared/utils/formatters";
 
 export function ProductCard({
@@ -39,6 +41,10 @@ export function ProductCard({
   const favoritesQuery = useFavoritesQuery();
   const addFavoriteMutation = useAddFavoriteMutation();
   const removeFavoriteMutation = useRemoveFavoriteMutation();
+  const productImages = getValidImageSources(product.images);
+  const primaryImage = productImages[0];
+  const ratingAverage = toFiniteNumber(product.ratingAverage).toFixed(1);
+  const reviewCount = Math.max(0, Math.trunc(toFiniteNumber(product.reviewCount)));
 
   const isFavorite = favoritesQuery.data?.some(
     (favorite) => favorite.productId === product.id,
@@ -70,7 +76,7 @@ export function ProductCard({
       return;
     }
 
-    compareStore.addProduct(product.id);
+    compareStore.addProduct(product.id, product.name);
     toast.success("Товар додано до порівняння.");
   };
 
@@ -81,9 +87,9 @@ export function ProductCard({
           href={`/products/${product.slug}`}
           className="relative block aspect-[3/3] overflow-hidden bg-muted"
         >
-          {product.images[0] ? (
+          {primaryImage ? (
             <Image
-              src={product.images[0]}
+              src={primaryImage}
               alt={product.name}
               fill
               className="object-contain transition duration-500 group-hover:scale-105"
@@ -144,9 +150,9 @@ export function ProductCard({
           </div>
           <div className="flex items-center gap-1 rounded-full bg-muted px-3 py-1 text-sm">
             <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-            <span>{product.ratingAverage.toFixed(1)}</span>
+            <span>{ratingAverage}</span>
             <span className="text-muted-foreground">
-              ({product.reviewCount})
+              ({reviewCount})
             </span>
           </div>
         </div>

@@ -1,40 +1,55 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { Heart, LayoutDashboard, Scale, ShoppingCart, UserCircle2 } from "lucide-react";
+import {
+  LayoutDashboard,
+  Scale,
+  ShoppingCart,
+  UserCircle2,
+} from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useMemo } from "react";
-import { useAuthSession, useLogoutMutation } from "@/features/auth/hooks/use-auth";
+import {
+  useAuthSession,
+  useLogoutMutation,
+} from "@/features/auth/hooks/use-auth";
 import { useCartQuery } from "@/features/cart/hooks/use-cart";
-import { useFavoritesQuery } from "@/features/favorites/hooks/use-favorites";
-import { primaryNavigation } from "@/shared/constants/navigation";
-import { cn } from "@/shared/lib/cn";
+import { HeaderSearch } from "@/shared/components/layout/header-search";
 import { Button } from "@/shared/components/ui/button";
 import { ThemeToggle } from "@/shared/components/ui/theme-toggle";
-import { HeaderSearch } from "@/shared/components/layout/header-search";
+import logo from "@/shared/assets/logo.png";
+import { primaryNavigation } from "@/shared/constants/navigation";
+import { cn } from "@/shared/lib/cn";
 
 export function SiteHeader() {
   const pathname = usePathname();
   const { user } = useAuthSession();
   const logoutMutation = useLogoutMutation();
   const cartQuery = useCartQuery();
-  const favoritesQuery = useFavoritesQuery();
-
-  const counts = useMemo(
-    () => ({
-      cart: cartQuery.data?.totalQuantity ?? 0,
-      favorites: favoritesQuery.data?.length ?? 0,
-    }),
-    [cartQuery.data?.totalQuantity, favoritesQuery.data?.length],
-  );
+  const cartCount = cartQuery.data?.totalQuantity ?? 0;
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/70 bg-background/90 backdrop-blur-xl">
       <div className="page-shell">
         <div className="flex min-h-[5rem] items-center gap-4 py-3">
-          <Link href="/" className="min-w-fit">
-            <div className="rounded-2xl bg-primary px-4 py-3 text-sm font-bold uppercase tracking-[0.2em] text-primary-foreground">
-              PS
+          <Link
+            href="/"
+            aria-label="Phone Shop"
+            className="flex min-w-fit items-center gap-3 rounded-2xl transition-opacity hover:opacity-90"
+          >
+            <Image
+              src={logo}
+              alt="Phone Shop"
+              priority
+              className="h-11 w-auto shrink-0"
+            />
+            <div className="hidden min-w-fit flex-col leading-none sm:flex">
+              <span className="text-base font-semibold tracking-tight text-foreground">
+                Phone Shop
+              </span>
+              <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
+                Smart store
+              </span>
             </div>
           </Link>
 
@@ -55,21 +70,8 @@ export function SiteHeader() {
 
           <HeaderSearch />
 
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex items-center gap-1">
             <ThemeToggle />
-
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/favorites" aria-label="Обране">
-                <div className="relative">
-                  <Heart className="h-4 w-4" />
-                  {counts.favorites > 0 ? (
-                    <span className="absolute -right-2 -top-2 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[10px] font-bold text-accent-foreground">
-                      {counts.favorites}
-                    </span>
-                  ) : null}
-                </div>
-              </Link>
-            </Button>
 
             <Button variant="ghost" size="icon" asChild>
               <Link href="/compare" aria-label="Порівняння">
@@ -81,17 +83,26 @@ export function SiteHeader() {
               <Link href="/cart" aria-label="Кошик">
                 <div className="relative">
                   <ShoppingCart className="h-4 w-4" />
-                  {counts.cart > 0 ? (
+                  {cartCount > 0 ? (
                     <span className="absolute -right-2 -top-2 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground">
-                      {counts.cart}
+                      {cartCount}
                     </span>
                   ) : null}
                 </div>
               </Link>
             </Button>
 
+            <Button variant="ghost" size="icon" className="md:hidden" asChild>
+              <Link
+                href={user ? "/profile" : "/auth/login"}
+                aria-label={user ? "Профіль" : "Увійти"}
+              >
+                <UserCircle2 className="h-4 w-4" />
+              </Link>
+            </Button>
+
             {user ? (
-              <div className="hidden items-center gap-2 md:flex">
+              <div className="hidden items-center gap-1 md:flex">
                 {user.role === "ADMIN" ? (
                   <Button variant="secondary" asChild>
                     <Link href="/admin">
@@ -101,7 +112,7 @@ export function SiteHeader() {
                   </Button>
                 ) : null}
                 <Button variant="ghost" asChild>
-                  <Link href="/orders">
+                  <Link href="/profile">
                     <UserCircle2 className="h-4 w-4" />
                     {user.firstName}
                   </Link>
@@ -120,7 +131,7 @@ export function SiteHeader() {
                   <Link href="/auth/login">Увійти</Link>
                 </Button>
                 <Button asChild>
-                  <Link href="/auth/register">Створити акаунт</Link>
+                  <Link href="/auth/register">Зареєструватися</Link>
                 </Button>
               </div>
             )}

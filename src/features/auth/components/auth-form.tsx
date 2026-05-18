@@ -12,7 +12,12 @@ import {
 } from "@/features/auth/hooks/use-auth";
 import { useCartSessionStore } from "@/features/cart/stores/cart-session-store";
 import { Button } from "@/shared/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 
@@ -75,12 +80,21 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
         </p>
       </CardHeader>
       <CardContent>
+        <p>admin@phoneshop.dev</p>
+        <p>Password123!</p>
+        <br />
+        <p>user@phoneshop.dev</p>
+        <p>Password123!</p>
+
         <form
           className="space-y-4"
           onSubmit={form.handleSubmit((values) => {
             if (mode === "login") {
               loginMutation.mutate(
-                { ...(values as LoginValues), sessionId: sessionId ?? undefined },
+                {
+                  ...(values as LoginValues),
+                  sessionId: sessionId ?? undefined,
+                },
                 {
                   onSuccess: () => router.push("/"),
                 },
@@ -97,16 +111,27 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="firstName">Ім'я</Label>
-                <Input id="firstName" {...form.register("firstName" as never)} />
+                <Input
+                  id="firstName"
+                  {...form.register("firstName" as never)}
+                />
                 <p className="text-xs text-destructive">
-                  {form.formState.errors.firstName?.message as string | undefined}
+                  {
+                    form.formState.errors.firstName?.message as
+                      | string
+                      | undefined
+                  }
                 </p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="lastName">Прізвище</Label>
                 <Input id="lastName" {...form.register("lastName" as never)} />
                 <p className="text-xs text-destructive">
-                  {form.formState.errors.lastName?.message as string | undefined}
+                  {
+                    form.formState.errors.lastName?.message as
+                      | string
+                      | undefined
+                  }
                 </p>
               </div>
             </div>
@@ -122,7 +147,11 @@ export function AuthForm({ mode }: { mode: "login" | "register" }) {
 
           <div className="space-y-2">
             <Label htmlFor="password">Пароль</Label>
-            <Input id="password" type="password" {...form.register("password")} />
+            <Input
+              id="password"
+              type="password"
+              {...form.register("password")}
+            />
             <p className="text-xs text-destructive">
               {form.formState.errors.password?.message}
             </p>

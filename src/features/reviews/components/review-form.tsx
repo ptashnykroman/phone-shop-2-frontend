@@ -7,7 +7,12 @@ import { z } from "zod";
 import { useAuthSession } from "@/features/auth/hooks/use-auth";
 import { useCreateReviewMutation } from "@/features/reviews/hooks/use-reviews";
 import { Button } from "@/shared/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { Textarea } from "@/shared/components/ui/textarea";
@@ -58,19 +63,31 @@ export function ReviewForm({ productId }: { productId: string }) {
       <CardContent>
         <form
           className="space-y-4"
-          onSubmit={form.handleSubmit((values) => reviewMutation.mutate(values))}
+          onSubmit={form.handleSubmit((values) =>
+            reviewMutation.mutate(values),
+          )}
         >
           <div className="space-y-2">
             <Label htmlFor="rating">Оцінка</Label>
-            <Input id="rating" type="number" min={1} max={5} {...form.register("rating")} />
-            <p className="text-xs text-destructive">{form.formState.errors.rating?.message}</p>
+            <Input
+              id="rating"
+              type="number"
+              min={1}
+              max={5}
+              {...form.register("rating")}
+            />
+            <p className="text-xs text-destructive">
+              {form.formState.errors.rating?.message}
+            </p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="text">Текст відгуку</Label>
             <Textarea id="text" {...form.register("text")} />
-            <p className="text-xs text-destructive">{form.formState.errors.text?.message}</p>
+            <p className="text-xs text-destructive">
+              {form.formState.errors.text?.message}
+            </p>
             <p className="text-xs text-muted-foreground">
-              Після надсилання відгук очікуватиме модерацію, оскільки backend підтримує підтвердження відгуків.
+              Після надсилання відгук очікуватиме модерацію.
             </p>
           </div>
           <Button type="submit" disabled={reviewMutation.isPending}>

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Manrope, Space_Grotesk } from "next/font/google";
-import "./globals.css";
 import { Providers } from "@/app/providers";
 import { SiteFooter } from "@/shared/components/layout/site-footer";
 import { SiteHeader } from "@/shared/components/layout/site-header";
+import "./globals.css";
 
 const manrope = Manrope({
   subsets: ["latin", "cyrillic"],
@@ -22,7 +22,18 @@ export const metadata: Metadata = {
     template: "%s | Phone Shop",
   },
   description:
-    "Сучасний інтернет-магазин смартфонів із чесним порівнянням, шкалами продуктивності та поясненням характеристик простими словами.",
+    "Сучасний інтернет-магазин смартфонів із чесним порівнянням, зручним каталогом та швидким замовленням.",
+  applicationName: "Phone Shop",
+  icons: {
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({

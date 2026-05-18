@@ -1,4 +1,5 @@
 import type { Product, ProductListQuery, AlternativesResponse, ExplainedSpecificationGroup, PerformanceScore, Brand, Category, ProductPublicReview, PaginatedResponse } from "@/shared/api/api-types";
+import { normalizeProduct, normalizeProductList } from "@/shared/api/product-normalizers";
 import { API_BASE_URL } from "@/shared/lib/env";
 import { compactParams } from "@/shared/utils/request-params";
 
@@ -19,8 +20,9 @@ export const serverApi = {
   products: (query: ProductListQuery = {}) =>
     request<PaginatedResponse<Product>>(
       `/products?${new URLSearchParams(compactParams(query) as Record<string, string>).toString()}`,
-    ),
-  productBySlug: (slug: string) => request<Product>(`/products/slug/${slug}`),
+    ).then(normalizeProductList),
+  productBySlug: (slug: string) =>
+    request<Product>(`/products/slug/${slug}`).then(normalizeProduct),
   explainedSpecifications: (productId: string) =>
     request<ExplainedSpecificationGroup[]>(
       `/products/${productId}/specifications/explained`,

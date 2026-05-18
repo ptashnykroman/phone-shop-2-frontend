@@ -30,4 +30,55 @@ describe("productsApi", () => {
       },
     });
   });
+
+  it("normalizes numeric rating fields from API responses", async () => {
+    vi.mocked(api.get).mockResolvedValueOnce({
+      data: {
+        id: "product-1",
+        name: "Pixel 9",
+        slug: "pixel-9",
+        description: "desc",
+        shortDescription: "short",
+        price: 1000,
+        oldPrice: null,
+        stock: 5,
+        sku: "PX-9",
+        color: "Black",
+        images: [],
+        isActive: true,
+        deletedAt: null,
+        ratingAverage: "4.75",
+        reviewCount: "12",
+        brandId: "brand-1",
+        categoryId: "cat-1",
+        createdAt: "2026-05-18T00:00:00.000Z",
+        updatedAt: "2026-05-18T00:00:00.000Z",
+        brand: {
+          id: "brand-1",
+          name: "Google",
+          slug: "google",
+          description: null,
+          logoUrl: null,
+          createdAt: "2026-05-18T00:00:00.000Z",
+          updatedAt: "2026-05-18T00:00:00.000Z",
+        },
+        category: {
+          id: "cat-1",
+          name: "Phones",
+          slug: "phones",
+          description: null,
+          createdAt: "2026-05-18T00:00:00.000Z",
+          updatedAt: "2026-05-18T00:00:00.000Z",
+        },
+        specifications: [],
+        performanceScore: null,
+        reviews: [],
+      },
+    });
+
+    const product = await productsApi.getBySlug("pixel-9");
+
+    expect(product.ratingAverage).toBe(4.75);
+    expect(product.reviewCount).toBe(12);
+  });
 });

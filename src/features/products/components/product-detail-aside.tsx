@@ -13,6 +13,7 @@ import {
   useRemoveFavoriteMutation,
 } from "@/features/favorites/hooks/use-favorites";
 import type { Product } from "@/shared/api/api-types";
+import { toFiniteNumber } from "@/shared/api/product-normalizers";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent } from "@/shared/components/ui/card";
@@ -27,6 +28,8 @@ export function ProductDetailAside({ product }: { product: Product }) {
   const favoritesQuery = useFavoritesQuery();
   const addFavoriteMutation = useAddFavoriteMutation();
   const removeFavoriteMutation = useRemoveFavoriteMutation();
+  const ratingAverage = toFiniteNumber(product.ratingAverage).toFixed(1);
+  const reviewCount = Math.max(0, Math.trunc(toFiniteNumber(product.reviewCount)));
 
   const isFavorite = favoritesQuery.data?.some(
     (favorite) => favorite.productId === product.id,
@@ -121,7 +124,7 @@ export function ProductDetailAside({ product }: { product: Product }) {
                   toast.error("До порівняння можна додати до 4 товарів.");
                   return;
                 }
-                compareStore.addProduct(product.id);
+                compareStore.addProduct(product.id, product.name);
               }}
             >
               <Scale className="h-4 w-4" />
@@ -134,7 +137,7 @@ export function ProductDetailAside({ product }: { product: Product }) {
           <p className="font-semibold text-foreground">SKU: {product.sku}</p>
           {product.color ? <p className="mt-2">Колір: {product.color}</p> : null}
           <p className="mt-2">
-            Рейтинг: {product.ratingAverage.toFixed(1)} з {product.reviewCount} відгуків
+            Рейтинг: {ratingAverage} з {reviewCount} відгуків
           </p>
         </div>
       </CardContent>

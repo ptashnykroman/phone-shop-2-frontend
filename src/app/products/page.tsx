@@ -9,7 +9,8 @@ import { PaginationControls } from "@/shared/components/ui/pagination-controls";
 
 export const metadata: Metadata = {
   title: "Каталог смартфонів",
-  description: "Каталог мобільних телефонів з фільтрами, порівнянням та поясненням характеристик.",
+  description:
+    "Каталог мобільних телефонів з фільтрами, порівнянням та поясненням характеристик.",
 };
 
 export const dynamic = "force-dynamic";
@@ -33,16 +34,27 @@ export default async function ProductsPage({
         brandIds:
           typeof params.brandIds === "string" ? [params.brandIds] : undefined,
         categoryIds:
-          typeof params.categoryIds === "string" ? [params.categoryIds] : undefined,
+          typeof params.categoryIds === "string"
+            ? [params.categoryIds]
+            : undefined,
         colors: typeof params.colors === "string" ? [params.colors] : undefined,
         minPrice:
-          typeof params.minPrice === "string" ? Number(params.minPrice) : undefined,
+          typeof params.minPrice === "string"
+            ? Number(params.minPrice)
+            : undefined,
         maxPrice:
-          typeof params.maxPrice === "string" ? Number(params.maxPrice) : undefined,
+          typeof params.maxPrice === "string"
+            ? Number(params.maxPrice)
+            : undefined,
         inStock: params.inStock === "true",
-        sortBy: typeof params.sortBy === "string" ? (params.sortBy as never) : undefined,
+        sortBy:
+          typeof params.sortBy === "string"
+            ? (params.sortBy as never)
+            : undefined,
         sortOrder:
-          typeof params.sortOrder === "string" ? (params.sortOrder as never) : undefined,
+          typeof params.sortOrder === "string"
+            ? (params.sortOrder as never)
+            : undefined,
         specifications:
           typeof params.specifications === "string"
             ? params.specifications
@@ -57,7 +69,6 @@ export default async function ProductsPage({
         <PageHeader
           eyebrow="Каталог"
           title="Обирайте смартфон під свій сценарій"
-          description="Фільтруйте моделі за брендом, ціною, кольором, наявністю й технічними параметрами, які реально підтримує backend."
         />
 
         <CatalogFilters brands={brands} categories={categories} />

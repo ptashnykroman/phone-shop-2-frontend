@@ -1,14 +1,40 @@
 "use client";
 
+import { LoaderCircle } from "lucide-react";
 import { useState } from "react";
-import { useComparisonQuery } from "@/features/comparison/hooks/use-comparison";
 import { CompareSummary } from "@/features/comparison/components/compare-summary";
+import {
+  buildComparisonConclusion,
+  buildComparisonStandoutWinners,
+} from "@/features/comparison/lib/comparison-formatters";
+import { useComparisonQuery } from "@/features/comparison/hooks/use-comparison";
 import { useCompareStore } from "@/features/comparison/stores/compare-store";
+import { Button } from "@/shared/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
 import { EmptyState } from "@/shared/components/ui/empty-state";
 import { ErrorState } from "@/shared/components/ui/error-state";
 import { PageHeader } from "@/shared/components/ui/page-header";
-import { Button } from "@/shared/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+
+function ComparePageLoadingState() {
+  return (
+    <div
+      className="flex min-h-64 flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-border/70 bg-card/30 px-6 py-10 text-center"
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <LoaderCircle className="h-8 w-8 animate-spin text-primary" />
+      <p className="text-sm text-muted-foreground">
+        Завантажуємо результати порівняння...
+      </p>
+    </div>
+  );
+}
 
 export default function ComparePage() {
   const [hideIdentical, setHideIdentical] = useState(false);
@@ -20,7 +46,7 @@ export default function ComparePage() {
       <div className="page-shell section-space">
         <EmptyState
           title="Для порівняння потрібно 2-4 товари"
-          description="Додайте смартфони з каталогу або зі сторінки товару, а backend сам порахує реальні відмінності."
+          description="Додайте смартфони з каталогу або зі сторінки товару, а система сама покаже реальні відмінності."
           actionLabel="Перейти в каталог"
           actionHref="/products"
         />
@@ -28,12 +54,21 @@ export default function ComparePage() {
     );
   }
 
+  const isComparisonLoading =
+    comparisonQuery.isPending || comparisonQuery.isLoading;
+  const comparison = comparisonQuery.data;
+  const standoutWinners = comparison
+    ? buildComparisonStandoutWinners(comparison)
+    : [];
+  const comparisonProductNameMap = new Map(
+    comparison?.products.map((product) => [product.id, product.name]) ?? [],
+  );
+
   return (
     <div className="page-shell section-space space-y-8">
       <PageHeader
-        eyebrow="Compare"
-        title="Чесне порівняння смартфонів"
-        description="Backend повертає groupedSpecifications, highlightedDifferences, winnerByCategory і summary, а frontend лише візуалізує ці дані."
+        eyebrow="Порівняння"
+        title="Порівняння смартфонів"
         actions={
           <>
             <Button
@@ -60,13 +95,18 @@ export default function ComparePage() {
               variant="outline"
               onClick={() => compareStore.removeProduct(productId)}
             >
-              Прибрати {productId.slice(0, 8)}...
+              Прибрати{" "}
+              {comparisonProductNameMap.get(productId) ??
+                compareStore.productNames[productId] ??
+                "Смартфон"}
             </Button>
           ))}
         </CardContent>
       </Card>
 
-      {comparisonQuery.isError || !comparisonQuery.data ? (
+      {isComparisonLoading ? (
+        <ComparePageLoadingState />
+      ) : comparisonQuery.isError || !comparison ? (
         <ErrorState />
       ) : (
         <>
@@ -76,20 +116,26 @@ export default function ComparePage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <p className="text-sm text-muted-foreground">
-                {comparisonQuery.data.summary.conclusion}
+                {buildComparisonConclusion(
+                  comparison.highlightedDifferences.length,
+                )}
               </p>
-              <ul className="space-y-2 text-sm">
-                {comparisonQuery.data.summary.standoutWinners.map((winner) => (
-                  <li key={winner}>• {winner}</li>
-                ))}
-              </ul>
+              {standoutWinners.length > 0 ? (
+                <ul className="list-disc space-y-2 pl-5 text-sm">
+                  {standoutWinners.map((winner) => (
+                    <li key={winner}>{winner}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Одноосібного лідера немає: моделі дуже близькі в ключових
+                  категоріях.
+                </p>
+              )}
             </CardContent>
           </Card>
 
-          <CompareSummary
-            comparison={comparisonQuery.data}
-            hideIdentical={hideIdentical}
-          />
+          <CompareSummary comparison={comparison} hideIdentical={hideIdentical} />
         </>
       )}
     </div>
