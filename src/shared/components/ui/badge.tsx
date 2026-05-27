@@ -2,23 +2,6 @@ import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/shared/lib/cn";
 
-// const badgeVariants = cva(
-//   "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold",
-//   {
-//     variants: {
-//       variant: {
-//         default: "bg-primary/10 text-primary",
-//         secondary: "bg-secondary text-secondary-foreground",
-//         outline: "border border-border text-foreground",
-//         accent: "bg-accent/15 text-foreground",
-//         destructive: "bg-destructive/10 text-destructive",
-//       },
-//     },
-//     defaultVariants: {
-//       variant: "default",
-//     },
-//   },
-// );
 const badgeVariants = cva(
   "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold",
   {

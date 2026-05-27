@@ -13,14 +13,71 @@ export function formatPrice(value: number) {
   }).format(value);
 }
 
+function parseDateValue(value: unknown): Date | null {
+  if (!value) {
+    return null;
+  }
+
+  if (value instanceof Date) {
+    return Number.isNaN(value.getTime()) ? null : value;
+  }
+
+  if (typeof value === "number") {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return null;
+    }
+
+    const directDate = new Date(trimmed);
+    if (!Number.isNaN(directDate.getTime())) {
+      return directDate;
+    }
+
+    const normalizedDate = new Date(trimmed.replace(" ", "T"));
+    if (!Number.isNaN(normalizedDate.getTime())) {
+      return normalizedDate;
+    }
+
+    const timestamp = Number(trimmed);
+    if (Number.isFinite(timestamp)) {
+      const timestampDate = new Date(timestamp);
+      if (!Number.isNaN(timestampDate.getTime())) {
+        return timestampDate;
+      }
+    }
+
+    return null;
+  }
+
+  if (typeof value === "object") {
+    const candidate =
+      "date" in value
+        ? value.date
+        : "$date" in value
+          ? value.$date
+          : "iso" in value
+            ? value.iso
+            : null;
+
+    return candidate ? parseDateValue(candidate) : null;
+  }
+
+  return null;
+}
+
 export function formatDate(value: string | Date | null | undefined) {
   if (!value) {
     return "Дата недоступна";
   }
 
-  const date = value instanceof Date ? value : new Date(value);
+  const date = parseDateValue(value);
 
-  if (Number.isNaN(date.getTime())) {
+  if (!date) {
     return "Дата недоступна";
   }
 

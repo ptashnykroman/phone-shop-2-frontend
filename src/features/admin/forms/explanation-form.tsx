@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import type { CharacteristicExplanation } from "@/shared/api/api-types";
@@ -10,15 +11,59 @@ import { Label } from "@/shared/components/ui/label";
 import { Textarea } from "@/shared/components/ui/textarea";
 
 const explanationSchema = z.object({
-  specificationKey: z.string().min(1, "Вкажіть specificationKey"),
-  label: z.string().min(1, "Вкажіть label"),
-  shortExplanation: z.string().min(10, "Коротке пояснення занадто коротке"),
-  detailedExplanation: z.string().min(10, "Детальне пояснення занадто коротке"),
-  practicalImpact: z.string().min(10, "Опишіть практичний вплив"),
+  specificationKey: z
+    .string()
+    .min(1, "Вкажіть ключ характеристики"),
+  label: z
+    .string()
+    .min(1, "Вкажіть назву характеристики"),
+  shortExplanation: z
+    .string()
+    .min(10, "Коротке пояснення занадто коротке"),
+  detailedExplanation: z
+    .string()
+    .min(10, "Детальне пояснення занадто коротке"),
+  practicalImpact: z
+    .string()
+    .min(10, "Опишіть практичний вплив"),
   example: z.string().optional(),
 });
 
 type ExplanationFormValues = z.infer<typeof explanationSchema>;
+
+const emptyValues: ExplanationFormValues = {
+  specificationKey: "",
+  label: "",
+  shortExplanation: "",
+  detailedExplanation: "",
+  practicalImpact: "",
+  example: "",
+};
+
+function toFormValues(
+  initialData?: CharacteristicExplanation,
+): ExplanationFormValues {
+  if (!initialData) {
+    return emptyValues;
+  }
+
+  return {
+    specificationKey: initialData.specificationKey,
+    label: initialData.label,
+    shortExplanation: initialData.shortExplanation,
+    detailedExplanation: initialData.detailedExplanation,
+    practicalImpact: initialData.practicalImpact,
+    example: initialData.example ?? "",
+  };
+}
+
+function FieldError({ message }: { message?: string }) {
+  if (!message) {
+    return null;
+  }
+
+  return <p className="text-xs text-destructive">{message}</p>;
+}
 
 export function ExplanationForm({
   initialData,
@@ -31,51 +76,77 @@ export function ExplanationForm({
 }) {
   const form = useForm<ExplanationFormValues>({
     resolver: zodResolver(explanationSchema),
-    defaultValues: initialData
-      ? {
-          specificationKey: initialData.specificationKey,
-          label: initialData.label,
-          shortExplanation: initialData.shortExplanation,
-          detailedExplanation: initialData.detailedExplanation,
-          practicalImpact: initialData.practicalImpact,
-          example: initialData.example ?? "",
-        }
-      : {
-          specificationKey: "",
-          label: "",
-          shortExplanation: "",
-          detailedExplanation: "",
-          practicalImpact: "",
-          example: "",
-        },
+    defaultValues: toFormValues(initialData),
   });
+
+  useEffect(() => {
+    form.reset(toFormValues(initialData));
+  }, [form, initialData]);
 
   return (
     <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
       <div className="space-y-2">
-        <Label htmlFor="specificationKey">specificationKey</Label>
-        <Input id="specificationKey" {...form.register("specificationKey")} />
+        <Label htmlFor="specificationKey">Ключ характеристики</Label>
+        <Input
+          id="specificationKey"
+          placeholder="battery_mah"
+          {...form.register("specificationKey")}
+        />
+        <p className="text-xs text-muted-foreground">
+          Системний ключ, за яким пояснення підтягується до товарів.
+        </p>
+        <FieldError message={form.formState.errors.specificationKey?.message} />
       </div>
+
       <div className="space-y-2">
-        <Label htmlFor="label">Label</Label>
-        <Input id="label" {...form.register("label")} />
+        <Label htmlFor="label">Назва характеристики</Label>
+        <Input
+          id="label"
+          placeholder="Ємність акумулятора"
+          {...form.register("label")}
+        />
+        <FieldError message={form.formState.errors.label?.message} />
       </div>
+
       <div className="space-y-2">
-        <Label htmlFor="shortExplanation">Short explanation</Label>
-        <Textarea id="shortExplanation" {...form.register("shortExplanation")} />
+        <Label htmlFor="shortExplanation">Коротке пояснення</Label>
+        <Textarea
+          id="shortExplanation"
+          placeholder="Коротко поясніть, що означає ця характеристика."
+          {...form.register("shortExplanation")}
+        />
+        <FieldError message={form.formState.errors.shortExplanation?.message} />
       </div>
+
       <div className="space-y-2">
-        <Label htmlFor="detailedExplanation">Detailed explanation</Label>
-        <Textarea id="detailedExplanation" {...form.register("detailedExplanation")} />
+        <Label htmlFor="detailedExplanation">Детальне пояснення</Label>
+        <Textarea
+          id="detailedExplanation"
+          placeholder="Опишіть детальніше, як працює ця характеристика."
+          {...form.register("detailedExplanation")}
+        />
+        <FieldError message={form.formState.errors.detailedExplanation?.message} />
       </div>
+
       <div className="space-y-2">
-        <Label htmlFor="practicalImpact">Practical impact</Label>
-        <Textarea id="practicalImpact" {...form.register("practicalImpact")} />
+        <Label htmlFor="practicalImpact">Практичний вплив</Label>
+        <Textarea
+          id="practicalImpact"
+          placeholder="Поясніть, як це впливає на реальне користування."
+          {...form.register("practicalImpact")}
+        />
+        <FieldError message={form.formState.errors.practicalImpact?.message} />
       </div>
+
       <div className="space-y-2">
-        <Label htmlFor="example">Example</Label>
-        <Textarea id="example" {...form.register("example")} />
+        <Label htmlFor="example">Приклад</Label>
+        <Textarea
+          id="example"
+          placeholder="Наприклад: смартфон витримає цілий день без підзарядки."
+          {...form.register("example")}
+        />
       </div>
+
       <Button type="submit">{submitLabel}</Button>
     </form>
   );

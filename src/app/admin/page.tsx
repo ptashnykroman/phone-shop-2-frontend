@@ -38,6 +38,12 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
+        <div className="flex flex-wrap gap-3">
+          <Button asChild variant="outline">
+            <Link href="/admin/explanations">Пояснення характеристик</Link>
+          </Button>
+        </div>
+
         <div className="grid gap-6 xl:grid-cols-2">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">

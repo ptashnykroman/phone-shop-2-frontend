@@ -52,4 +52,40 @@ describe("AuthForm", () => {
       ),
     );
   });
+
+  it("normalizes phone before submitting register data", async () => {
+    renderWithClient(<AuthForm mode="register" />);
+
+    fireEvent.change(screen.getByLabelText("Email"), {
+      target: { value: "user@test.dev" },
+    });
+    fireEvent.change(document.getElementById("password")!, {
+      target: { value: "Password123!" },
+    });
+    fireEvent.change(document.getElementById("firstName")!, {
+      target: { value: "Ivan" },
+    });
+    fireEvent.change(document.getElementById("lastName")!, {
+      target: { value: "Petrenko" },
+    });
+    fireEvent.change(document.getElementById("phone")!, {
+      target: { value: "+38 (067) 123-45-67" },
+    });
+    fireEvent.click(screen.getByRole("button"));
+
+    await waitFor(() =>
+      expect(registerMutate).toHaveBeenCalledWith(
+        {
+          email: "user@test.dev",
+          password: "Password123!",
+          firstName: "Ivan",
+          lastName: "Petrenko",
+          phone: "+380671234567",
+        },
+        expect.objectContaining({
+          onSuccess: expect.any(Function),
+        }),
+      ),
+    );
+  });
 });

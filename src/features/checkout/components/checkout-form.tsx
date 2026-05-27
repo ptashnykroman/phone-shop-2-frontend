@@ -105,7 +105,7 @@ export function CheckoutForm({ cart }: { cart: Cart }) {
                 ]}
               />
               <p className="text-xs text-muted-foreground">
-                Backend має окремий mock-flow лише для `MOCK`, тому саме цей сценарій веде на демонстрацію оплати.
+                *Backend має окремий mock-flow лише для `MOCK`, тому саме цей сценарій веде на демонстрацію оплати.
               </p>
             </div>
 

@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useOrderDetailQuery } from "@/features/orders/hooks/use-orders";
+import { Button } from "@/shared/components/ui/button";
 import { ErrorState } from "@/shared/components/ui/error-state";
 import { PageHeader } from "@/shared/components/ui/page-header";
 import { ProtectedRoute } from "@/shared/components/ui/protected-route";
@@ -52,6 +54,14 @@ export default function OrderDetailsPage() {
                 <p className="pt-2 text-3xl font-bold">
                   {formatPrice(orderQuery.data.totalPrice)}
                 </p>
+                {orderQuery.data.status === "AWAITING_PAYMENT" &&
+                orderQuery.data.paymentMethod === "MOCK" ? (
+                  <Button asChild className="mt-3">
+                    <Link href={`/payment/mock?orderId=${orderQuery.data.id}`}>
+                      Повернутися до оплати
+                    </Link>
+                  </Button>
+                ) : null}
               </CardContent>
             </Card>
 

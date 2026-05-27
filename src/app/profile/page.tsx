@@ -75,19 +75,6 @@ export default function ProfilePage() {
                   {user?.phone ?? 'Не вказано'}
                 </p>
               </div>
-
-              <div className="rounded-2xl border border-border/70 bg-background/70 p-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Статус</p>
-                <p className="mt-3 flex items-center gap-2 font-medium">
-                  <ShieldCheck className="h-4 w-4 text-primary" />
-                  {user?.isActive ? 'Акаунт активний' : 'Акаунт деактивовано'}
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-border/70 bg-background/70 p-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">З нами з</p>
-                <p className="mt-3 font-medium">{user ? formatDate(user.createdAt) : 'Немає даних'}</p>
-              </div>
             </CardContent>
           </Card>
 

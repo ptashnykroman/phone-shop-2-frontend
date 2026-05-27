@@ -12,6 +12,35 @@ import { Button } from '@/shared/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card'
 import { Input } from '@/shared/components/ui/input'
 import { Label } from '@/shared/components/ui/label'
+import { getApiErrorMessage } from '@/shared/lib/api-error'
+
+function normalizePhoneInput(value?: string) {
+  if (typeof value !== 'string') {
+    return undefined
+  }
+
+  const trimmed = value.trim()
+  if (!trimmed) {
+    return undefined
+  }
+
+  const digits = trimmed.replace(/\D/g, '')
+  if (!digits) {
+    return undefined
+  }
+
+  return trimmed.startsWith('+') ? `+${digits}` : digits
+}
+
+function getLocalizedAuthErrorMessage(error: unknown) {
+  const message = getApiErrorMessage(error)
+
+  if (message === 'Network Error' || message === 'Failed to fetch') {
+    return "Не вдалося з'єднатися із сервером."
+  }
+
+  return message
+}
 
 const loginSchema = z.object({
   email: z.string().email('Вкажіть коректний email'),
@@ -39,6 +68,8 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
   const sessionId = useCartSessionStore((state) => state.sessionId)
   const loginMutation = useLoginMutation()
   const registerMutation = useRegisterMutation()
+  const activeMutation = mode === 'login' ? loginMutation : registerMutation
+  const authErrorMessage = activeMutation.error ? getLocalizedAuthErrorMessage(activeMutation.error) : undefined
 
   const form = useForm<AuthFormValues>({
     resolver: zodResolver(mode === 'login' ? loginSchema : registerSchema) as Resolver<AuthFormValues>,
@@ -88,9 +119,15 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
               return
             }
 
-            registerMutation.mutate(values as RegisterValues, {
-              onSuccess: () => router.push('/'),
-            })
+            registerMutation.mutate(
+              {
+                ...(values as RegisterValues),
+                phone: normalizePhoneInput(values.phone),
+              },
+              {
+                onSuccess: () => router.push('/'),
+              },
+            )
           })}
         >
           {mode === 'register' ? (
@@ -127,10 +164,12 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
           {mode === 'register' ? (
             <div className="space-y-2">
               <Label htmlFor="phone">Телефон</Label>
-              <Input id="phone" {...form.register('phone' as never)} />
+              <Input id="phone" type="tel" placeholder="+380 67 123 45 67" {...form.register('phone' as never)} />
               <p className="text-xs text-destructive">{form.formState.errors.phone?.message as string | undefined}</p>
             </div>
           ) : null}
+
+          {authErrorMessage ? <p className="text-sm text-destructive">{authErrorMessage}</p> : null}
 
           <Button type="submit" className="w-full" disabled={loginMutation.isPending || registerMutation.isPending}>
             {mode === 'login' ? 'Увійти' : 'Зареєструватися'}

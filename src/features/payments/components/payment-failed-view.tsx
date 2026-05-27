@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { XCircle } from "lucide-react";
-import { Button } from "@/shared/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import Link from 'next/link'
+import { XCircle } from 'lucide-react'
+import { Button } from '@/shared/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card'
 
 export function PaymentFailedView({ orderId }: { orderId?: string }) {
   return (
@@ -17,7 +17,8 @@ export function PaymentFailedView({ orderId }: { orderId?: string }) {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Backend не має окремого `mock-fail` endpoint-а, тому цей сценарій не змінює статус замовлення. Ви можете повернутися до mock payment або відкрити саме замовлення.
+            Цей сценарій не змінює статус замовлення. Ви можете повернутися до mock payment або відкрити саме
+            замовлення.
           </p>
           <div className="flex gap-3">
             {orderId ? (
@@ -38,5 +39,5 @@ export function PaymentFailedView({ orderId }: { orderId?: string }) {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }
