@@ -1,4 +1,8 @@
 import { Info } from "lucide-react";
+import {
+  formatComparisonGroupName,
+  formatComparisonSpecificationLabel,
+} from "@/features/comparison/lib/comparison-formatters";
 import type { ExplainedSpecificationGroup } from "@/shared/api/api-types";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/shared/components/ui/accordion";
 import { Badge } from "@/shared/components/ui/badge";
@@ -23,7 +27,7 @@ export function ExplainedSpecifications({
               className="rounded-2xl border border-border px-4"
             >
               <AccordionTrigger className="text-base">
-                {group.groupName}
+                {formatComparisonGroupName(group.groupName)}
               </AccordionTrigger>
               <AccordionContent className="space-y-4">
                 {group.items.map((item) => (
@@ -32,7 +36,9 @@ export function ExplainedSpecifications({
                     className="rounded-2xl border border-border/70 bg-muted/30 p-4"
                   >
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="font-semibold">{item.label}</p>
+                      <p className="font-semibold">
+                        {formatComparisonSpecificationLabel(item.key, item.label)}
+                      </p>
                       <Badge variant={item.importance >= 8 ? "default" : "outline"}>
                         Важливість {item.importance}/10
                       </Badge>

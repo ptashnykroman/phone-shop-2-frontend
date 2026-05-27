@@ -1,93 +1,80 @@
-"use client";
+'use client'
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useFieldArray, useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { z } from "zod";
-import { useBrandsQuery } from "@/features/brands/hooks/use-brands";
-import { useCategoriesQuery } from "@/features/categories/hooks/use-categories";
-import {
-  useCreateProductMutation,
-  useUpdateProductMutation,
-} from "@/features/products/hooks/use-products";
-import type { Product } from "@/shared/api/api-types";
-import { Button } from "@/shared/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/shared/components/ui/card";
-import { Input } from "@/shared/components/ui/input";
-import { Label } from "@/shared/components/ui/label";
-import { Select } from "@/shared/components/ui/select";
-import { Textarea } from "@/shared/components/ui/textarea";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { LoaderCircle } from 'lucide-react'
+import { useFieldArray, useForm } from 'react-hook-form'
+import { useRouter } from 'next/navigation'
+import { z } from 'zod'
+import { useBrandsQuery } from '@/features/brands/hooks/use-brands'
+import { useCategoriesQuery } from '@/features/categories/hooks/use-categories'
+import { useCreateProductMutation, useUpdateProductMutation } from '@/features/products/hooks/use-products'
+import type { Product } from '@/shared/api/api-types'
+import { Button } from '@/shared/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card'
+import { Input } from '@/shared/components/ui/input'
+import { Label } from '@/shared/components/ui/label'
+import { Select } from '@/shared/components/ui/select'
+import { Textarea } from '@/shared/components/ui/textarea'
 
 const specificationSchema = z.object({
-  groupName: z.string().min(1, "Вкажіть групу"),
-  key: z.string().min(1, "Вкажіть ключ"),
-  label: z.string().min(1, "Вкажіть label"),
-  value: z.string().min(1, "Вкажіть значення"),
+  groupName: z.string().min(1, 'Вкажіть групу'),
+  key: z.string().min(1, 'Вкажіть ключ'),
+  label: z.string().min(1, 'Вкажіть label'),
+  value: z.string().min(1, 'Вкажіть значення'),
   numericValue: z.string().optional(),
   unit: z.string().optional(),
   importance: z.coerce.number().min(1).max(10),
   isComparable: z.boolean(),
-});
+})
 
 const productFormSchema = z.object({
-  name: z.string().min(2, "Вкажіть назву"),
+  name: z.string().min(2, 'Вкажіть назву'),
   slug: z.string().optional(),
-  description: z.string().min(10, "Опис занадто короткий"),
-  shortDescription: z.string().min(10, "Короткий опис занадто короткий"),
+  description: z.string().min(10, 'Опис занадто короткий'),
+  shortDescription: z.string().min(10, 'Короткий опис занадто короткий'),
   price: z.coerce.number().min(0, "Ціна не може бути від'ємною"),
   oldPrice: z.string().optional(),
   stock: z.coerce.number().int().min(0),
-  sku: z.string().min(2, "Вкажіть SKU"),
+  sku: z.string().min(2, 'Вкажіть SKU'),
   color: z.string().optional(),
   imagesText: z.string().optional(),
   isActive: z.boolean(),
-  brandId: z.string().uuid("Оберіть бренд"),
-  categoryId: z.string().uuid("Оберіть категорію"),
+  brandId: z.string().uuid('Оберіть бренд'),
+  categoryId: z.string().uuid('Оберіть категорію'),
   specifications: z.array(specificationSchema),
-});
+})
 
-type ProductFormValues = z.infer<typeof productFormSchema>;
+type ProductFormValues = z.infer<typeof productFormSchema>
 
-function FieldLabel({
-  htmlFor,
-  label,
-  required = false,
-}: {
-  htmlFor: string;
-  label: string;
-  required?: boolean;
-}) {
+function FieldLabel({ htmlFor, label, required = false }: { htmlFor: string; label: string; required?: boolean }) {
   return (
     <Label htmlFor={htmlFor}>
       {label}
       {required ? <span className="ml-1 text-destructive">*</span> : null}
     </Label>
-  );
+  )
 }
 
 function FieldHint({ text }: { text: string }) {
-  return <p className="text-xs text-muted-foreground">{text}</p>;
+  return <p className="text-xs text-muted-foreground">{text}</p>
 }
 
 function FieldError({ message }: { message?: string }) {
   if (!message) {
-    return null;
+    return null
   }
 
-  return <p className="text-xs text-destructive">{message}</p>;
+  return <p className="text-xs text-destructive">{message}</p>
 }
 
 export function ProductForm({ product }: { product?: Product }) {
-  const router = useRouter();
-  const brandsQuery = useBrandsQuery();
-  const categoriesQuery = useCategoriesQuery();
-  const createMutation = useCreateProductMutation();
-  const updateMutation = useUpdateProductMutation(product?.id ?? "");
+  const router = useRouter()
+  const brandsQuery = useBrandsQuery()
+  const categoriesQuery = useCategoriesQuery()
+  const createMutation = useCreateProductMutation()
+  const updateMutation = useUpdateProductMutation(product?.id ?? '')
+  const isSubmitting = createMutation.isPending || updateMutation.isPending
+  const pendingLabel = product ? 'Збереження...' : 'Створення...'
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema),
@@ -98,11 +85,11 @@ export function ProductForm({ product }: { product?: Product }) {
           description: product.description,
           shortDescription: product.shortDescription,
           price: product.price,
-          oldPrice: product.oldPrice ? String(product.oldPrice) : "",
+          oldPrice: product.oldPrice ? String(product.oldPrice) : '',
           stock: product.stock,
           sku: product.sku,
-          color: product.color ?? "",
-          imagesText: product.images.join("\n"),
+          color: product.color ?? '',
+          imagesText: product.images.join('\n'),
           isActive: product.isActive,
           brandId: product.brandId,
           categoryId: product.categoryId,
@@ -111,37 +98,34 @@ export function ProductForm({ product }: { product?: Product }) {
             key: specification.key,
             label: specification.label,
             value: specification.value,
-            numericValue:
-              specification.numericValue !== null
-                ? String(specification.numericValue)
-                : "",
-            unit: specification.unit ?? "",
+            numericValue: specification.numericValue !== null ? String(specification.numericValue) : '',
+            unit: specification.unit ?? '',
             importance: specification.importance,
             isComparable: specification.isComparable,
           })),
         }
       : {
-          name: "",
-          slug: "",
-          description: "",
-          shortDescription: "",
+          name: '',
+          slug: '',
+          description: '',
+          shortDescription: '',
           price: 0,
-          oldPrice: "",
+          oldPrice: '',
           stock: 0,
-          sku: "",
-          color: "",
-          imagesText: "",
+          sku: '',
+          color: '',
+          imagesText: '',
           isActive: true,
-          brandId: "",
-          categoryId: "",
+          brandId: '',
+          categoryId: '',
           specifications: [],
         },
-  });
+  })
 
   const fieldArray = useFieldArray({
     control: form.control,
-    name: "specifications",
-  });
+    name: 'specifications',
+  })
 
   const submit = (values: ProductFormValues) => {
     const payload = {
@@ -156,7 +140,7 @@ export function ProductForm({ product }: { product?: Product }) {
       color: values.color || undefined,
       images: values.imagesText
         ? values.imagesText
-            .split("\n")
+            .split('\n')
             .map((item) => item.trim())
             .filter(Boolean)
         : undefined,
@@ -168,21 +152,19 @@ export function ProductForm({ product }: { product?: Product }) {
         key: specification.key,
         label: specification.label,
         value: specification.value,
-        numericValue: specification.numericValue
-          ? Number(specification.numericValue)
-          : undefined,
+        numericValue: specification.numericValue ? Number(specification.numericValue) : undefined,
         unit: specification.unit || undefined,
         importance: specification.importance,
         isComparable: specification.isComparable,
       })),
-    };
+    }
 
-    const mutation = product ? updateMutation : createMutation;
+    const mutation = product ? updateMutation : createMutation
 
     mutation.mutate(payload, {
-      onSuccess: () => router.push("/admin/products"),
-    });
-  };
+      onSuccess: () => router.push('/admin/products'),
+    })
+  }
 
   return (
     <form className="space-y-6" onSubmit={form.handleSubmit(submit)}>
@@ -193,81 +175,61 @@ export function ProductForm({ product }: { product?: Product }) {
         <CardContent className="grid gap-4 md:grid-cols-2">
           <div className="space-y-2">
             <FieldLabel htmlFor="name" label="Назва" required />
-            <Input id="name" {...form.register("name")} />
+            <Input id="name" {...form.register('name')} />
             <FieldError message={form.formState.errors.name?.message} />
           </div>
 
           <div className="space-y-2">
             <FieldLabel htmlFor="slug" label="Slug" />
-            <Input id="slug" {...form.register("slug")} />
+            <Input id="slug" {...form.register('slug')} />
           </div>
 
           <div className="space-y-2 md:col-span-2">
             <FieldLabel htmlFor="description" label="Опис" required />
-            <Textarea id="description" {...form.register("description")} />
+            <Textarea id="description" {...form.register('description')} />
             <FieldError message={form.formState.errors.description?.message} />
           </div>
 
           <div className="space-y-2 md:col-span-2">
-            <FieldLabel
-              htmlFor="shortDescription"
-              label="Короткий опис"
-              required
-            />
-            <Textarea
-              id="shortDescription"
-              {...form.register("shortDescription")}
-              className="min-h-[90px]"
-            />
-            <FieldError
-              message={form.formState.errors.shortDescription?.message}
-            />
+            <FieldLabel htmlFor="shortDescription" label="Короткий опис" required />
+            <Textarea id="shortDescription" {...form.register('shortDescription')} className="min-h-[90px]" />
+            <FieldError message={form.formState.errors.shortDescription?.message} />
           </div>
 
           <div className="space-y-2">
             <FieldLabel htmlFor="price" label="Ціна" required />
-            <Input
-              id="price"
-              type="number"
-              step="0.01"
-              {...form.register("price")}
-            />
+            <Input id="price" type="number" step="0.01" {...form.register('price')} />
             <FieldError message={form.formState.errors.price?.message} />
           </div>
 
           <div className="space-y-2">
             <FieldLabel htmlFor="oldPrice" label="Стара ціна" />
-            <Input
-              id="oldPrice"
-              type="number"
-              step="0.01"
-              {...form.register("oldPrice")}
-            />
+            <Input id="oldPrice" type="number" step="0.01" {...form.register('oldPrice')} />
           </div>
 
           <div className="space-y-2">
             <FieldLabel htmlFor="stock" label="Склад" required />
-            <Input id="stock" type="number" {...form.register("stock")} />
+            <Input id="stock" type="number" {...form.register('stock')} />
             <FieldError message={form.formState.errors.stock?.message} />
           </div>
 
           <div className="space-y-2">
             <FieldLabel htmlFor="sku" label="SKU" required />
-            <Input id="sku" {...form.register("sku")} />
+            <Input id="sku" {...form.register('sku')} />
             <FieldError message={form.formState.errors.sku?.message} />
           </div>
 
           <div className="space-y-2">
             <FieldLabel htmlFor="color" label="Колір" />
-            <Input id="color" {...form.register("color")} />
+            <Input id="color" {...form.register('color')} />
           </div>
 
           <div className="space-y-2">
             <FieldLabel htmlFor="brandId" label="Бренд" required />
             <Select
               id="brandId"
-              value={form.watch("brandId")}
-              onChange={(event) => form.setValue("brandId", event.target.value)}
+              value={form.watch('brandId')}
+              onChange={(event) => form.setValue('brandId', event.target.value)}
               options={(brandsQuery.data ?? []).map((brand) => ({
                 label: brand.name,
                 value: brand.id,
@@ -281,10 +243,8 @@ export function ProductForm({ product }: { product?: Product }) {
             <FieldLabel htmlFor="categoryId" label="Категорія" required />
             <Select
               id="categoryId"
-              value={form.watch("categoryId")}
-              onChange={(event) =>
-                form.setValue("categoryId", event.target.value)
-              }
+              value={form.watch('categoryId')}
+              onChange={(event) => form.setValue('categoryId', event.target.value)}
               options={(categoriesQuery.data ?? []).map((category) => ({
                 label: category.name,
                 value: category.id,
@@ -295,20 +255,15 @@ export function ProductForm({ product }: { product?: Product }) {
           </div>
 
           <div className="space-y-2 md:col-span-2">
-            <FieldLabel
-              htmlFor="imagesText"
-              label="URL зображень, кожен з нового рядка"
-            />
-            <Textarea id="imagesText" {...form.register("imagesText")} />
+            <FieldLabel htmlFor="imagesText" label="URL зображень, кожен з нового рядка" />
+            <Textarea id="imagesText" {...form.register('imagesText')} />
           </div>
 
           <label className="flex items-center gap-3 text-sm md:col-span-2">
             <input
               type="checkbox"
-              checked={form.watch("isActive")}
-              onChange={(event) =>
-                form.setValue("isActive", event.target.checked)
-              }
+              checked={form.watch('isActive')}
+              onChange={(event) => form.setValue('isActive', event.target.checked)}
             />
             Товар активний
           </label>
@@ -320,9 +275,8 @@ export function ProductForm({ product }: { product?: Product }) {
           <div className="space-y-2">
             <CardTitle>Характеристики</CardTitle>
             <p className="text-sm text-muted-foreground">
-              Додайте параметри, які побачить покупець на сторінці товару та в
-              порівнянні. Наприклад: діагональ екрана, пам'ять, камера,
-              акумулятор.
+              Додайте параметри, які побачить покупець на сторінці товару та в порівнянні. Наприклад: діагональ екрана,
+              пам'ять, камера, акумулятор.
             </p>
           </div>
           <Button
@@ -330,12 +284,12 @@ export function ProductForm({ product }: { product?: Product }) {
             variant="outline"
             onClick={() =>
               fieldArray.append({
-                groupName: "",
-                key: "",
-                label: "",
-                value: "",
-                numericValue: "",
-                unit: "",
+                groupName: '',
+                key: '',
+                label: '',
+                value: '',
+                numericValue: '',
+                unit: '',
                 importance: 5,
                 isComparable: true,
               })
@@ -347,15 +301,14 @@ export function ProductForm({ product }: { product?: Product }) {
         <CardContent className="space-y-4">
           {fieldArray.fields.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-border/70 px-4 py-6 text-sm text-muted-foreground">
-              Ще немає жодної характеристики. Додайте ключові параметри товару,
-              щоб покупцю було легше зрозуміти модель і порівняти її з іншими.
+              Ще немає жодної характеристики. Додайте ключові параметри товару, щоб покупцю було легше зрозуміти модель
+              і порівняти її з іншими.
             </div>
           ) : null}
 
           {fieldArray.fields.map((field, index) => {
-            const specificationErrors =
-              form.formState.errors.specifications?.[index];
-            const fieldIdPrefix = `specification-${field.id}`;
+            const specificationErrors = form.formState.errors.specifications?.[index]
+            const fieldIdPrefix = `specification-${field.id}`
 
             return (
               <div
@@ -364,46 +317,26 @@ export function ProductForm({ product }: { product?: Product }) {
               >
                 <div className="flex flex-col gap-3 lg:col-span-2 xl:col-span-3 xl:flex-row xl:items-start xl:justify-between">
                   <div className="space-y-1">
-                    <p className="text-sm font-semibold">
-                      Характеристика #{index + 1}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Заповніть назву для покупця, значення та, за потреби,
-                      технічний ключ для фільтрів і пояснень.
-                    </p>
+                    <p className="text-base font-bold">Характеристика #{index + 1}</p>
                   </div>
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    onClick={() => fieldArray.remove(index)}
-                  >
+                  <Button type="button" variant="destructive" onClick={() => fieldArray.remove(index)}>
                     Видалити
                   </Button>
                 </div>
 
                 <div className="space-y-2">
-                  <FieldLabel
-                    htmlFor={`${fieldIdPrefix}-groupName`}
-                    label="Група"
-                    required
-                  />
+                  <FieldLabel htmlFor={`${fieldIdPrefix}-groupName`} label="Група" required />
                   <FieldHint text="Секція, у якій характеристика буде показана. Наприклад: Дисплей, Камера, Акумулятор." />
                   <Input
                     id={`${fieldIdPrefix}-groupName`}
                     placeholder="Наприклад: Дисплей"
                     {...form.register(`specifications.${index}.groupName`)}
                   />
-                  <FieldError
-                    message={specificationErrors?.groupName?.message}
-                  />
+                  <FieldError message={specificationErrors?.groupName?.message} />
                 </div>
 
                 <div className="space-y-2">
-                  <FieldLabel
-                    htmlFor={`${fieldIdPrefix}-key`}
-                    label="Ключ"
-                    required
-                  />
+                  <FieldLabel htmlFor={`${fieldIdPrefix}-key`} label="Ключ" required />
                   <FieldHint text="Службова назва латиницею без пробілів. Наприклад: screen_size, battery_capacity, ram." />
                   <Input
                     id={`${fieldIdPrefix}-key`}
@@ -414,12 +347,8 @@ export function ProductForm({ product }: { product?: Product }) {
                 </div>
 
                 <div className="space-y-2">
-                  <FieldLabel
-                    htmlFor={`${fieldIdPrefix}-label`}
-                    label="Назва для покупця"
-                    required
-                  />
-                  <FieldHint text="Людська назва характеристики, яку бачить користувач. Наприклад: Ємність акумулятора." />
+                  <FieldLabel htmlFor={`${fieldIdPrefix}-label`} label="Назва для покупця" required />
+                  <FieldHint text="Назва характеристики, яку бачить користувач. Наприклад: Ємність акумулятора." />
                   <Input
                     id={`${fieldIdPrefix}-label`}
                     placeholder="Наприклад: Ємність акумулятора"
@@ -429,11 +358,7 @@ export function ProductForm({ product }: { product?: Product }) {
                 </div>
 
                 <div className="space-y-2">
-                  <FieldLabel
-                    htmlFor={`${fieldIdPrefix}-value`}
-                    label="Значення"
-                    required
-                  />
+                  <FieldLabel htmlFor={`${fieldIdPrefix}-value`} label="Значення" required />
                   <FieldHint text="Текст, який буде показано поруч із назвою характеристики. Наприклад: 5000, OLED, 12/256." />
                   <Input
                     id={`${fieldIdPrefix}-value`}
@@ -444,10 +369,7 @@ export function ProductForm({ product }: { product?: Product }) {
                 </div>
 
                 <div className="space-y-2">
-                  <FieldLabel
-                    htmlFor={`${fieldIdPrefix}-numericValue`}
-                    label="Числове значення"
-                  />
+                  <FieldLabel htmlFor={`${fieldIdPrefix}-numericValue`} label="Числове значення" />
                   <FieldHint text="Заповнюйте, якщо характеристику треба порівнювати або використовувати у фільтрах як число." />
                   <Input
                     id={`${fieldIdPrefix}-numericValue`}
@@ -459,10 +381,7 @@ export function ProductForm({ product }: { product?: Product }) {
                 </div>
 
                 <div className="space-y-2">
-                  <FieldLabel
-                    htmlFor={`${fieldIdPrefix}-unit`}
-                    label="Одиниця виміру"
-                  />
+                  <FieldLabel htmlFor={`${fieldIdPrefix}-unit`} label="Одиниця виміру" />
                   <FieldHint text="Наприклад: ГБ, мА·год, Гц, Мп. Якщо не потрібна, залиште поле порожнім." />
                   <Input
                     id={`${fieldIdPrefix}-unit`}
@@ -472,11 +391,7 @@ export function ProductForm({ product }: { product?: Product }) {
                 </div>
 
                 <div className="space-y-2">
-                  <FieldLabel
-                    htmlFor={`${fieldIdPrefix}-importance`}
-                    label="Важливість"
-                    required
-                  />
+                  <FieldLabel htmlFor={`${fieldIdPrefix}-importance`} label="Важливість" required />
                   <FieldHint text="Число від 1 до 10. Чим вище значення, тим пріоритетніше характеристика." />
                   <Input
                     id={`${fieldIdPrefix}-importance`}
@@ -486,42 +401,41 @@ export function ProductForm({ product }: { product?: Product }) {
                     placeholder="Від 1 до 10"
                     {...form.register(`specifications.${index}.importance`)}
                   />
-                  <FieldError
-                    message={specificationErrors?.importance?.message}
-                  />
+                  <FieldError message={specificationErrors?.importance?.message} />
                 </div>
 
                 <div className="flex flex-col gap-2 rounded-xl border border-border/60 bg-muted/30 p-3 lg:col-span-2 xl:col-span-3">
-                  <Label
-                    htmlFor={`${fieldIdPrefix}-isComparable`}
-                    className="flex items-center gap-2 text-sm"
-                  >
+                  <Label htmlFor={`${fieldIdPrefix}-isComparable`} className="flex items-center gap-2 text-sm">
                     <input
                       id={`${fieldIdPrefix}-isComparable`}
                       type="checkbox"
-                      checked={form.watch(
-                        `specifications.${index}.isComparable`,
-                      )}
-                      onChange={(event) =>
-                        form.setValue(
-                          `specifications.${index}.isComparable`,
-                          event.target.checked,
-                        )
-                      }
+                      checked={form.watch(`specifications.${index}.isComparable`)}
+                      onChange={(event) => form.setValue(`specifications.${index}.isComparable`, event.target.checked)}
                     />
                     Показувати в порівнянні товарів
                   </Label>
                   <FieldHint text="Увімкніть, якщо ця характеристика має сенс для порівняння між різними моделями." />
                 </div>
               </div>
-            );
+            )
           })}
         </CardContent>
       </Card>
 
-      <Button type="submit" size="lg">
-        {product ? "Оновити товар" : "Створити товар"}
+      <Button
+        type="submit"
+        size="lg"
+        disabled={isSubmitting}
+        className={isSubmitting ? 'relative min-w-[13rem] text-transparent' : 'relative min-w-[13rem]'}
+      >
+        {product ? 'Оновити товар' : 'Створити товар'}
+        {isSubmitting ? (
+          <span className="absolute inset-0 flex items-center justify-center gap-2 text-primary-foreground">
+            <LoaderCircle className="h-4 w-4 animate-spin" />
+            <span>{pendingLabel}</span>
+          </span>
+        ) : null}
       </Button>
     </form>
-  );
+  )
 }

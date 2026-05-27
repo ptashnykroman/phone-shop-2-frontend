@@ -134,7 +134,7 @@ export function ProductDetailAside({ product }: { product: Product }) {
         </div>
 
         <div className="rounded-2xl border border-border/70 bg-muted/30 p-4 text-sm text-muted-foreground">
-          <p className="font-semibold text-foreground">SKU: {product.sku}</p>
+          <p className="font-semibold text-foreground">Артикул: {product.sku}</p>
           {product.color ? <p className="mt-2">Колір: {product.color}</p> : null}
           <p className="mt-2">
             Рейтинг: {ratingAverage} з {reviewCount} відгуків

@@ -1,17 +1,17 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { useDeactivateProductMutation, useProductsQuery } from "@/features/products/hooks/use-products";
-import { Button } from "@/shared/components/ui/button";
-import { Card, CardContent } from "@/shared/components/ui/card";
-import { EmptyState } from "@/shared/components/ui/empty-state";
-import { ErrorState } from "@/shared/components/ui/error-state";
-import { PageHeader } from "@/shared/components/ui/page-header";
-import { ProtectedRoute } from "@/shared/components/ui/protected-route";
-import { Skeleton } from "@/shared/components/ui/skeleton";
-import { formatPrice } from "@/shared/utils/formatters";
+import Link from 'next/link'
+import { useDeactivateProductMutation, useProductsQuery } from '@/features/products/hooks/use-products'
+import { Button } from '@/shared/components/ui/button'
+import { Card, CardContent } from '@/shared/components/ui/card'
+import { EmptyState } from '@/shared/components/ui/empty-state'
+import { ErrorState } from '@/shared/components/ui/error-state'
+import { PageHeader } from '@/shared/components/ui/page-header'
+import { ProtectedRoute } from '@/shared/components/ui/protected-route'
+import { Skeleton } from '@/shared/components/ui/skeleton'
+import { formatPrice } from '@/shared/utils/formatters'
 
-const loadingCards = Array.from({ length: 3 });
+const loadingCards = Array.from({ length: 3 })
 
 function AdminProductsLoadingState() {
   return (
@@ -33,13 +33,13 @@ function AdminProductsLoadingState() {
         </Card>
       ))}
     </div>
-  );
+  )
 }
 
 export default function AdminProductsPage() {
-  const productsQuery = useProductsQuery({ page: 1, limit: 50 });
-  const deactivateMutation = useDeactivateProductMutation();
-  const products = productsQuery.data?.items ?? [];
+  const productsQuery = useProductsQuery({ page: 1, limit: 50 })
+  const deactivateMutation = useDeactivateProductMutation()
+  const products = productsQuery.data?.items ?? []
 
   return (
     <ProtectedRoute adminOnly>
@@ -47,7 +47,6 @@ export default function AdminProductsPage() {
         <PageHeader
           eyebrow="Admin products"
           title="Керування товарами"
-          description="Створення, редагування та деактивація товарів без зміни backend API."
           actions={
             <Button asChild>
               <Link href="/admin/products/new">Новий товар</Link>
@@ -82,10 +81,7 @@ export default function AdminProductsPage() {
                     <Button asChild variant="outline">
                       <Link href={`/admin/products/${product.id}/edit`}>Редагувати</Link>
                     </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() => deactivateMutation.mutate(product.id)}
-                    >
+                    <Button variant="destructive" onClick={() => deactivateMutation.mutate(product.id)}>
                       Деактивувати
                     </Button>
                   </div>
@@ -96,5 +92,5 @@ export default function AdminProductsPage() {
         )}
       </div>
     </ProtectedRoute>
-  );
+  )
 }

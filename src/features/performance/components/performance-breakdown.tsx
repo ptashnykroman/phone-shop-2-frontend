@@ -27,7 +27,7 @@ export function PerformanceBreakdown({ score }: { score: PerformanceScore }) {
         <div className="h-40 w-40">
           <ResponsiveContainer width="100%" height="100%">
             <RadialBarChart
-              data={[{ name: "overall", value: score.overallScore, fill: "#0f766e" }]}
+              data={[{ name: "загальна оцінка", value: score.overallScore, fill: "#0f766e" }]}
               innerRadius="68%"
               outerRadius="100%"
               startAngle={90}
@@ -51,7 +51,7 @@ export function PerformanceBreakdown({ score }: { score: PerformanceScore }) {
                 dominantBaseline="middle"
                 className="fill-muted-foreground text-xs"
               >
-                overall
+                оцінка
               </text>
             </RadialBarChart>
           </ResponsiveContainer>

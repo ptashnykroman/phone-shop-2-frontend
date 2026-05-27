@@ -2,7 +2,6 @@
   "name": "phone-shop-frontend",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "npm@11.12.1",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -51,8 +50,5 @@
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^4.0.8"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": ["sharp"]
   }
 }

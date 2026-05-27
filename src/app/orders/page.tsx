@@ -1,28 +1,44 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { useMyOrdersQuery } from "@/features/orders/hooks/use-orders";
-import { Button } from "@/shared/components/ui/button";
-import { EmptyState } from "@/shared/components/ui/empty-state";
-import { ErrorState } from "@/shared/components/ui/error-state";
-import { PageHeader } from "@/shared/components/ui/page-header";
-import { ProtectedRoute } from "@/shared/components/ui/protected-route";
-import { Card, CardContent } from "@/shared/components/ui/card";
-import { formatDate, formatOrderStatus, formatPaymentStatus, formatPrice } from "@/shared/utils/formatters";
+import Link from 'next/link'
+import { Button } from '@/shared/components/ui/button'
+import { EmptyState } from '@/shared/components/ui/empty-state'
+import { ErrorState } from '@/shared/components/ui/error-state'
+import { PageHeader } from '@/shared/components/ui/page-header'
+import { Card, CardContent } from '@/shared/components/ui/card'
+import { useMyOrdersQuery } from '@/features/orders/hooks/use-orders'
+import { ProtectedRoute } from '@/shared/components/ui/protected-route'
+import { Skeleton } from '@/shared/components/ui/skeleton'
+import { formatDate, formatOrderStatus, formatPaymentStatus, formatPrice } from '@/shared/utils/formatters'
 
 export default function OrdersPage() {
-  const ordersQuery = useMyOrdersQuery();
+  const ordersQuery = useMyOrdersQuery()
+  const isOrdersLoading = ordersQuery.isPending || ordersQuery.isLoading
 
   return (
     <ProtectedRoute>
       <div className="page-shell section-space space-y-8">
-        <PageHeader
-          eyebrow="Orders"
-          title="Мої замовлення"
-          description="Тут відображаються статуси доставки, оплати та склад усіх замовлень поточного користувача."
-        />
+        <PageHeader eyebrow="Orders" title="Мої замовлення" />
 
-        {ordersQuery.isError ? (
+        {isOrdersLoading ? (
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, index) => (
+              <Card key={index}>
+                <CardContent className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="space-y-2">
+                    <Skeleton className="h-6 w-56" />
+                    <Skeleton className="h-4 w-40" />
+                    <Skeleton className="h-4 w-48" />
+                  </div>
+                  <div className="flex flex-wrap items-center gap-4">
+                    <Skeleton className="h-8 w-28" />
+                    <Skeleton className="h-11 w-28" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : ordersQuery.isError ? (
           <ErrorState />
         ) : !ordersQuery.data || ordersQuery.data.length === 0 ? (
           <EmptyState
@@ -38,9 +54,7 @@ export default function OrdersPage() {
                 <CardContent className="flex flex-col gap-4 p-5 lg:flex-row lg:items-center lg:justify-between">
                   <div className="space-y-2">
                     <p className="text-lg font-semibold">Замовлення #{order.id}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {formatDate(order.createdAt)}
-                    </p>
+                    <p className="text-sm text-muted-foreground">{formatDate(order.createdAt)}</p>
                     <p className="text-sm text-muted-foreground">
                       {formatOrderStatus(order.status)} • {formatPaymentStatus(order.paymentStatus)}
                     </p>
@@ -58,5 +72,5 @@ export default function OrdersPage() {
         )}
       </div>
     </ProtectedRoute>
-  );
+  )
 }

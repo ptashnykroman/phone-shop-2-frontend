@@ -1,59 +1,45 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import {
-  Heart,
-  LayoutDashboard,
-  Mail,
-  Package,
-  Phone,
-  ShieldCheck,
-} from "lucide-react";
-import { useAuthSession } from "@/features/auth/hooks/use-auth";
-import { useFavoritesQuery } from "@/features/favorites/hooks/use-favorites";
-import { useMyOrdersQuery } from "@/features/orders/hooks/use-orders";
-import { Badge } from "@/shared/components/ui/badge";
-import { Button } from "@/shared/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/shared/components/ui/card";
-import { PageHeader } from "@/shared/components/ui/page-header";
-import { ProtectedRoute } from "@/shared/components/ui/protected-route";
-import { formatDate } from "@/shared/utils/formatters";
+import Link from 'next/link'
+import { Heart, LayoutDashboard, Mail, Package, Phone, ShieldCheck } from 'lucide-react'
+import { useAuthSession } from '@/features/auth/hooks/use-auth'
+import { useFavoritesQuery } from '@/features/favorites/hooks/use-favorites'
+import { useMyOrdersQuery } from '@/features/orders/hooks/use-orders'
+import { Badge } from '@/shared/components/ui/badge'
+import { Button } from '@/shared/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/components/ui/card'
+import { PageHeader } from '@/shared/components/ui/page-header'
+import { ProtectedRoute } from '@/shared/components/ui/protected-route'
+import { formatDate } from '@/shared/utils/formatters'
 
-function getRoleLabel(role: "USER" | "ADMIN" | "GUEST" | undefined) {
-  if (role === "ADMIN") {
-    return "Адміністратор";
+function getRoleLabel(role: 'USER' | 'ADMIN' | 'GUEST' | undefined) {
+  if (role === 'ADMIN') {
+    return 'Адміністратор'
   }
 
-  if (role === "USER") {
-    return "Користувач";
+  if (role === 'USER') {
+    return 'Користувач'
   }
 
-  return "Гість";
+  return 'Гість'
 }
 
 export default function ProfilePage() {
-  const { user } = useAuthSession();
-  const favoritesQuery = useFavoritesQuery();
-  const ordersQuery = useMyOrdersQuery();
+  const { user } = useAuthSession()
+  const favoritesQuery = useFavoritesQuery()
+  const ordersQuery = useMyOrdersQuery()
 
-  const favoritesCount = favoritesQuery.data?.length ?? 0;
-  const ordersCount = ordersQuery.data?.length ?? 0;
+  const favoritesCount = favoritesQuery.data?.length ?? 0
+  const ordersCount = ordersQuery.data?.length ?? 0
 
   return (
     <ProtectedRoute>
       <div className="page-shell section-space space-y-8">
         <PageHeader
           eyebrow="Profile"
-          title={user ? `${user.firstName} ${user.lastName}` : "Профіль"}
-          description="Керуйте персональними розділами акаунта: переглядайте обране, слідкуйте за замовленнями та швидко переходьте до потрібної дії."
+          title={user ? `${user.firstName} ${user.lastName}` : 'Профіль'}
           actions={
-            user?.role === "ADMIN" ? (
+            user?.role === 'ADMIN' ? (
               <Button variant="secondary" asChild>
                 <Link href="/admin">
                   <LayoutDashboard className="h-4 w-4" />
@@ -69,52 +55,38 @@ export default function ProfilePage() {
             <CardHeader>
               <div className="flex flex-wrap items-center gap-3">
                 <CardTitle>Дані акаунта</CardTitle>
-                <Badge variant={user?.role === "ADMIN" ? "default" : "outline"}>
-                  {getRoleLabel(user?.role)}
-                </Badge>
+                {user?.role === 'ADMIN' ? <Badge>{getRoleLabel(user?.role)}</Badge> : null}
               </div>
-              <CardDescription>
-                Основна інформація про ваш профіль та статус доступу.
-              </CardDescription>
+              <CardDescription>Основна інформація про ваш профіль.</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-2xl border border-border/70 bg-background/70 p-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                  Email
-                </p>
+                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Email</p>
                 <p className="mt-3 flex items-center gap-2 font-medium">
                   <Mail className="h-4 w-4 text-primary" />
-                  {user?.email ?? "Немає даних"}
+                  {user?.email ?? 'Немає даних'}
                 </p>
               </div>
 
               <div className="rounded-2xl border border-border/70 bg-background/70 p-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                  Телефон
-                </p>
+                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Телефон</p>
                 <p className="mt-3 flex items-center gap-2 font-medium">
                   <Phone className="h-4 w-4 text-primary" />
-                  {user?.phone ?? "Не вказано"}
+                  {user?.phone ?? 'Не вказано'}
                 </p>
               </div>
 
               <div className="rounded-2xl border border-border/70 bg-background/70 p-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                  Статус
-                </p>
+                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Статус</p>
                 <p className="mt-3 flex items-center gap-2 font-medium">
                   <ShieldCheck className="h-4 w-4 text-primary" />
-                  {user?.isActive ? "Акаунт активний" : "Акаунт деактивовано"}
+                  {user?.isActive ? 'Акаунт активний' : 'Акаунт деактивовано'}
                 </p>
               </div>
 
               <div className="rounded-2xl border border-border/70 bg-background/70 p-4">
-                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                  З нами з
-                </p>
-                <p className="mt-3 font-medium">
-                  {user ? formatDate(user.createdAt) : "Немає даних"}
-                </p>
+                <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">З нами з</p>
+                <p className="mt-3 font-medium">{user ? formatDate(user.createdAt) : 'Немає даних'}</p>
               </div>
             </CardContent>
           </Card>
@@ -128,9 +100,7 @@ export default function ProfilePage() {
                     Обране
                   </CardTitle>
                   <Badge variant="accent">
-                    {favoritesQuery.isPending
-                      ? "Оновлюємо..."
-                      : `${favoritesCount} товарів`}
+                    {favoritesQuery.isPending ? 'Оновлюємо...' : `${favoritesCount} товарів`}
                   </Badge>
                 </div>
                 <CardDescription>
@@ -155,14 +125,10 @@ export default function ProfilePage() {
                     Замовлення
                   </CardTitle>
                   <Badge variant="outline">
-                    {ordersQuery.isPending
-                      ? "Завантажуємо..."
-                      : `${ordersCount} замовлень`}
+                    {ordersQuery.isPending ? 'Завантажуємо...' : `${ordersCount} замовлень`}
                   </Badge>
                 </div>
-                <CardDescription>
-                  Контролюйте статус оплати, доставки та переглядайте історію покупок.
-                </CardDescription>
+                <CardDescription>Контролюйте статус оплати, доставки та переглядайте історію покупок.</CardDescription>
               </CardHeader>
               <CardContent className="mt-auto space-y-4">
                 <p className="text-sm text-muted-foreground">
@@ -177,5 +143,5 @@ export default function ProfilePage() {
         </div>
       </div>
     </ProtectedRoute>
-  );
+  )
 }

@@ -1,29 +1,25 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { useAdminOverviewQuery } from "@/features/admin/hooks/use-admin";
-import { useAdminOrdersQuery } from "@/features/orders/hooks/use-orders";
-import { useProductsQuery } from "@/features/products/hooks/use-products";
-import { Button } from "@/shared/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
-import { ErrorState } from "@/shared/components/ui/error-state";
-import { PageHeader } from "@/shared/components/ui/page-header";
-import { ProtectedRoute } from "@/shared/components/ui/protected-route";
-import { formatDate, formatOrderStatus, formatPrice } from "@/shared/utils/formatters";
+import Link from 'next/link'
+import { useAdminOverviewQuery } from '@/features/admin/hooks/use-admin'
+import { useAdminOrdersQuery } from '@/features/orders/hooks/use-orders'
+import { useProductsQuery } from '@/features/products/hooks/use-products'
+import { Button } from '@/shared/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card'
+import { ErrorState } from '@/shared/components/ui/error-state'
+import { PageHeader } from '@/shared/components/ui/page-header'
+import { ProtectedRoute } from '@/shared/components/ui/protected-route'
+import { formatDate, formatOrderStatus, formatPrice } from '@/shared/utils/formatters'
 
 export default function AdminDashboardPage() {
-  const overviewQuery = useAdminOverviewQuery();
-  const ordersQuery = useAdminOrdersQuery(1, 5);
-  const productsQuery = useProductsQuery({ page: 1, limit: 5 });
+  const overviewQuery = useAdminOverviewQuery()
+  const ordersQuery = useAdminOrdersQuery(1, 5)
+  const productsQuery = useProductsQuery({ page: 1, limit: 5 })
 
   return (
     <ProtectedRoute adminOnly>
       <div className="page-shell section-space space-y-8">
-        <PageHeader
-          eyebrow="Admin"
-          title="Адмін-панель магазину"
-          description="Огляд ключових метрик, останніх замовлень і товарів на основі наявних backend admin endpoint-ів."
-        />
+        <PageHeader eyebrow="Admin" title="Адмін-панель магазину" />
 
         {overviewQuery.isError ? (
           <ErrorState />
@@ -33,9 +29,7 @@ export default function AdminDashboardPage() {
               ? Object.entries(overviewQuery.data).map(([key, value]) => (
                   <Card key={key}>
                     <CardContent className="p-6">
-                      <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">
-                        {key}
-                      </p>
+                      <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">{key}</p>
                       <p className="mt-3 text-4xl font-bold">{value}</p>
                     </CardContent>
                   </Card>
@@ -87,5 +81,5 @@ export default function AdminDashboardPage() {
         </div>
       </div>
     </ProtectedRoute>
-  );
+  )
 }

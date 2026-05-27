@@ -1,24 +1,19 @@
-"use client";
+'use client'
 
-import { LoaderCircle } from "lucide-react";
-import { useState } from "react";
-import { CompareSummary } from "@/features/comparison/components/compare-summary";
+import { LoaderCircle } from 'lucide-react'
+import { useState } from 'react'
+import { CompareSummary } from '@/features/comparison/components/compare-summary'
 import {
   buildComparisonConclusion,
   buildComparisonStandoutWinners,
-} from "@/features/comparison/lib/comparison-formatters";
-import { useComparisonQuery } from "@/features/comparison/hooks/use-comparison";
-import { useCompareStore } from "@/features/comparison/stores/compare-store";
-import { Button } from "@/shared/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/shared/components/ui/card";
-import { EmptyState } from "@/shared/components/ui/empty-state";
-import { ErrorState } from "@/shared/components/ui/error-state";
-import { PageHeader } from "@/shared/components/ui/page-header";
+} from '@/features/comparison/lib/comparison-formatters'
+import { useComparisonQuery } from '@/features/comparison/hooks/use-comparison'
+import { useCompareStore } from '@/features/comparison/stores/compare-store'
+import { Button } from '@/shared/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/components/ui/card'
+import { EmptyState } from '@/shared/components/ui/empty-state'
+import { ErrorState } from '@/shared/components/ui/error-state'
+import { PageHeader } from '@/shared/components/ui/page-header'
 
 function ComparePageLoadingState() {
   return (
@@ -29,40 +24,33 @@ function ComparePageLoadingState() {
       aria-busy="true"
     >
       <LoaderCircle className="h-8 w-8 animate-spin text-primary" />
-      <p className="text-sm text-muted-foreground">
-        Завантажуємо результати порівняння...
-      </p>
+      <p className="text-sm text-muted-foreground">Завантажуємо результати порівняння...</p>
     </div>
-  );
+  )
 }
 
 export default function ComparePage() {
-  const [hideIdentical, setHideIdentical] = useState(false);
-  const compareStore = useCompareStore();
-  const comparisonQuery = useComparisonQuery(compareStore.productIds);
+  const [hideIdentical, setHideIdentical] = useState(false)
+  const compareStore = useCompareStore()
+  const comparisonQuery = useComparisonQuery(compareStore.productIds)
 
   if (compareStore.productIds.length < 2) {
     return (
       <div className="page-shell section-space">
         <EmptyState
           title="Для порівняння потрібно 2-4 товари"
-          description="Додайте смартфони з каталогу або зі сторінки товару, а система сама покаже реальні відмінності."
+          description="Додайте смартфони до порівняння і система покаже вам реальні відмінності."
           actionLabel="Перейти в каталог"
           actionHref="/products"
         />
       </div>
-    );
+    )
   }
 
-  const isComparisonLoading =
-    comparisonQuery.isPending || comparisonQuery.isLoading;
-  const comparison = comparisonQuery.data;
-  const standoutWinners = comparison
-    ? buildComparisonStandoutWinners(comparison)
-    : [];
-  const comparisonProductNameMap = new Map(
-    comparison?.products.map((product) => [product.id, product.name]) ?? [],
-  );
+  const isComparisonLoading = comparisonQuery.isPending || comparisonQuery.isLoading
+  const comparison = comparisonQuery.data
+  const standoutWinners = comparison ? buildComparisonStandoutWinners(comparison) : []
+  const comparisonProductNameMap = new Map(comparison?.products.map((product) => [product.id, product.name]) ?? [])
 
   return (
     <div className="page-shell section-space space-y-8">
@@ -71,11 +59,8 @@ export default function ComparePage() {
         title="Порівняння смартфонів"
         actions={
           <>
-            <Button
-              variant="outline"
-              onClick={() => setHideIdentical((current) => !current)}
-            >
-              {hideIdentical ? "Показати все" : "Сховати однакове"}
+            <Button variant="outline" onClick={() => setHideIdentical((current) => !current)}>
+              {hideIdentical ? 'Показати все' : 'Сховати однакове'}
             </Button>
             <Button variant="outline" onClick={() => compareStore.clear()}>
               Очистити
@@ -90,15 +75,8 @@ export default function ComparePage() {
         </CardHeader>
         <CardContent className="flex flex-wrap gap-3">
           {compareStore.productIds.map((productId) => (
-            <Button
-              key={productId}
-              variant="outline"
-              onClick={() => compareStore.removeProduct(productId)}
-            >
-              Прибрати{" "}
-              {comparisonProductNameMap.get(productId) ??
-                compareStore.productNames[productId] ??
-                "Смартфон"}
+            <Button key={productId} variant="outline" onClick={() => compareStore.removeProduct(productId)}>
+              Прибрати {comparisonProductNameMap.get(productId) ?? compareStore.productNames[productId] ?? 'Смартфон'}
             </Button>
           ))}
         </CardContent>
@@ -116,9 +94,7 @@ export default function ComparePage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <p className="text-sm text-muted-foreground">
-                {buildComparisonConclusion(
-                  comparison.highlightedDifferences.length,
-                )}
+                {buildComparisonConclusion(comparison.highlightedDifferences.length)}
               </p>
               {standoutWinners.length > 0 ? (
                 <ul className="list-disc space-y-2 pl-5 text-sm">
@@ -128,8 +104,7 @@ export default function ComparePage() {
                 </ul>
               ) : (
                 <p className="text-sm text-muted-foreground">
-                  Одноосібного лідера немає: моделі дуже близькі в ключових
-                  категоріях.
+                  Одноосібного лідера немає: моделі дуже близькі в ключових категоріях.
                 </p>
               )}
             </CardContent>
@@ -139,5 +114,5 @@ export default function ComparePage() {
         </>
       )}
     </div>
-  );
+  )
 }

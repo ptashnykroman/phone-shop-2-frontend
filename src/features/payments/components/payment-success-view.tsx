@@ -7,15 +7,19 @@ import { Button } from "@/shared/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
 import { ErrorState } from "@/shared/components/ui/error-state";
 import { ProtectedRoute } from "@/shared/components/ui/protected-route";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 import { formatPrice } from "@/shared/utils/formatters";
 
 export function PaymentSuccessView({ orderId }: { orderId: string }) {
   const orderQuery = useOrderDetailQuery(orderId);
+  const isOrderLoading = orderQuery.isPending || orderQuery.isLoading;
 
   return (
     <ProtectedRoute>
       <div className="page-shell section-space">
-        {orderQuery.isError || !orderQuery.data ? (
+        {isOrderLoading ? (
+          <Skeleton className="h-60 w-full" />
+        ) : orderQuery.isError || !orderQuery.data ? (
           <ErrorState />
         ) : (
           <Card>

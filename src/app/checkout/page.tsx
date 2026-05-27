@@ -17,8 +17,7 @@ export default function CheckoutPage() {
         <PageHeader
           eyebrow="Checkout"
           title="Оформлення замовлення"
-          description="Форма відправляє тільки ті поля, які очікує `CreateOrderDto`: доставка, адреса і метод оплати."
-        />
+           />
 
         {cartQuery.isLoading ? (
           <Skeleton className="h-60 w-full" />

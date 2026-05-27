@@ -6,6 +6,7 @@ import { ErrorState } from "@/shared/components/ui/error-state";
 import { PageHeader } from "@/shared/components/ui/page-header";
 import { ProtectedRoute } from "@/shared/components/ui/protected-route";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 import {
   formatDate,
   formatDeliveryType,
@@ -18,6 +19,7 @@ import {
 export default function OrderDetailsPage() {
   const params = useParams<{ id: string }>();
   const orderQuery = useOrderDetailQuery(params.id);
+  const isOrderLoading = orderQuery.isPending || orderQuery.isLoading;
 
   return (
     <ProtectedRoute>
@@ -25,10 +27,14 @@ export default function OrderDetailsPage() {
         <PageHeader
           eyebrow="Order details"
           title="Деталі замовлення"
-          description="Сторінка читає реальні поля `Order`, `OrderItem`, `PaymentStatus` і `OrderStatus`, які вже визначені в backend."
         />
 
-        {orderQuery.isError || !orderQuery.data ? (
+        {isOrderLoading ? (
+          <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+            <Skeleton className="h-72 w-full" />
+            <Skeleton className="h-72 w-full" />
+          </div>
+        ) : orderQuery.isError || !orderQuery.data ? (
           <ErrorState />
         ) : (
           <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">

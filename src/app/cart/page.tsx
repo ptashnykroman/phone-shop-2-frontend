@@ -1,21 +1,26 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { Minus, Plus, Trash2 } from "lucide-react";
-import { useCartQuery, useClearCartMutation, useRemoveCartItemMutation, useUpdateCartItemMutation } from "@/features/cart/hooks/use-cart";
-import { EmptyState } from "@/shared/components/ui/empty-state";
-import { ErrorState } from "@/shared/components/ui/error-state";
-import { PageHeader } from "@/shared/components/ui/page-header";
-import { Button } from "@/shared/components/ui/button";
-import { Card, CardContent } from "@/shared/components/ui/card";
-import { Skeleton } from "@/shared/components/ui/skeleton";
-import { formatPrice } from "@/shared/utils/formatters";
+import Link from 'next/link'
+import { Minus, Plus, Trash2 } from 'lucide-react'
+import {
+  useCartQuery,
+  useClearCartMutation,
+  useRemoveCartItemMutation,
+  useUpdateCartItemMutation,
+} from '@/features/cart/hooks/use-cart'
+import { EmptyState } from '@/shared/components/ui/empty-state'
+import { ErrorState } from '@/shared/components/ui/error-state'
+import { PageHeader } from '@/shared/components/ui/page-header'
+import { Button } from '@/shared/components/ui/button'
+import { Card, CardContent } from '@/shared/components/ui/card'
+import { Skeleton } from '@/shared/components/ui/skeleton'
+import { formatPrice } from '@/shared/utils/formatters'
 
 export default function CartPage() {
-  const cartQuery = useCartQuery();
-  const updateMutation = useUpdateCartItemMutation();
-  const removeMutation = useRemoveCartItemMutation();
-  const clearMutation = useClearCartMutation();
+  const cartQuery = useCartQuery()
+  const updateMutation = useUpdateCartItemMutation()
+  const removeMutation = useRemoveCartItemMutation()
+  const clearMutation = useClearCartMutation()
 
   if (cartQuery.isLoading) {
     return (
@@ -23,7 +28,7 @@ export default function CartPage() {
         <Skeleton className="h-10 w-64" />
         <Skeleton className="h-40 w-full" />
       </div>
-    );
+    )
   }
 
   if (cartQuery.isError || !cartQuery.data) {
@@ -31,7 +36,7 @@ export default function CartPage() {
       <div className="page-shell section-space">
         <ErrorState />
       </div>
-    );
+    )
   }
 
   if (cartQuery.data.items.length === 0) {
@@ -44,7 +49,7 @@ export default function CartPage() {
           actionHref="/products"
         />
       </div>
-    );
+    )
   }
 
   return (
@@ -52,13 +57,8 @@ export default function CartPage() {
       <PageHeader
         eyebrow="Cart"
         title="Ваш кошик"
-        description="Гостьовий кошик синхронізується через `x-session-id`, а після входу backend вміє зливати його з акаунтом."
         actions={
-          <Button
-            variant="outline"
-            onClick={() => clearMutation.mutate()}
-            disabled={clearMutation.isPending}
-          >
+          <Button variant="outline" onClick={() => clearMutation.mutate()} disabled={clearMutation.isPending}>
             Очистити кошик
           </Button>
         }
@@ -88,9 +88,7 @@ export default function CartPage() {
                   >
                     <Minus className="h-4 w-4" />
                   </Button>
-                  <span className="min-w-8 text-center font-semibold">
-                    {item.quantity}
-                  </span>
+                  <span className="min-w-8 text-center font-semibold">{item.quantity}</span>
                   <Button
                     variant="outline"
                     size="icon"
@@ -103,14 +101,8 @@ export default function CartPage() {
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
-                  <p className="min-w-28 text-right text-lg font-bold">
-                    {item.lineTotal} грн
-                  </p>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => removeMutation.mutate(item.id)}
-                  >
+                  <p className="min-w-28 text-right text-lg font-bold">{item.lineTotal} грн</p>
+                  <Button variant="ghost" size="icon" onClick={() => removeMutation.mutate(item.id)}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
@@ -127,9 +119,7 @@ export default function CartPage() {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Разом</p>
-              <p className="mt-1 text-4xl font-bold">
-                {formatPrice(cartQuery.data.subtotal)}
-              </p>
+              <p className="mt-1 text-4xl font-bold">{formatPrice(cartQuery.data.subtotal)}</p>
             </div>
             <Button asChild size="lg" className="w-full">
               <Link href="/checkout">Перейти до оформлення</Link>
@@ -138,5 +128,5 @@ export default function CartPage() {
         </Card>
       </div>
     </div>
-  );
+  )
 }

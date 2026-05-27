@@ -49,9 +49,14 @@ export function AlternativesPanel({
                           {formatPrice(item.priceDifference)}
                         </Badge>
                       </div>
-                      <ul className="space-y-2 text-sm text-muted-foreground">
+                      <ul className="hidden">
                         {item.mainAdvantages.map((advantage) => (
                           <li key={advantage}>• {advantage}</li>
+                        ))}
+                      </ul>
+                      <ul className="space-y-2 text-sm text-muted-foreground">
+                        {item.mainAdvantages.map((advantage) => (
+                          <li key={`localized-${advantage}`}>- {advantage}</li>
                         ))}
                       </ul>
                       <div className="flex gap-2">
