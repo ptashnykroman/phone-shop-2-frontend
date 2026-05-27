@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Headphones, ShieldCheck, Truck } from "lucide-react";
 import { ProductCard } from "@/features/products/components/product-card";
@@ -82,13 +81,10 @@ export default async function HomePage() {
             <div className="relative mx-auto hidden lg:flex w-full items-center justify-center">
               <div className="relative w-full sm:p-2">
                 <div className="relative mx-auto aspect-[4/5] w-full max-w-[460px]">
-                  <Image
-                    src={heroPhoneImage}
+                  <img
+                    src={heroPhoneImage.src}
                     alt="Смартфон у hero секції"
-                    fill
-                    priority
-                    sizes="(min-width: 1024px) 34vw, (min-width: 640px) 50vw, 80vw"
-                    className="object-contain drop-shadow-[0_28px_50px_rgba(15,23,42,0.24)]"
+                    className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_28px_50px_rgba(15,23,42,0.24)]"
                   />
                 </div>
               </div>

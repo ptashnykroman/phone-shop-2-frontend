@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { Heart, Scale, ShoppingCart, Star } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -88,11 +87,12 @@ export function ProductCard({
           className="relative block aspect-[3/3] overflow-hidden bg-muted"
         >
           {primaryImage ? (
-            <Image
+            <img
               src={primaryImage}
               alt={product.name}
-              fill
-              className="object-contain transition duration-500 group-hover:scale-105"
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-contain transition duration-500 group-hover:scale-105"
             />
           ) : (
             <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/10 to-accent/15">

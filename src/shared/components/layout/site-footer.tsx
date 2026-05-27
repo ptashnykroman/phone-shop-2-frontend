@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 import logo from "@/shared/assets/logo.png";
-import Image from "next/image";
 
 export function SiteFooter() {
   return (
@@ -13,10 +12,9 @@ export function SiteFooter() {
             aria-label="Phone Shop"
             className="flex min-w-fit items-center gap-3 rounded-2xl transition-opacity hover:opacity-90"
           >
-            <Image
-              src={logo}
+            <img
+              src={logo.src}
               alt="Phone Shop"
-              priority
               className="h-11 w-auto shrink-0"
             />
             <div className="hidden min-w-fit flex-col leading-none sm:flex">

@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { serverApi } from '@/shared/api/server-fetch'
@@ -70,7 +69,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
           <div className="grid gap-4 md:grid-cols-[1fr_0.32fr]">
             <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] border border-border/70 bg-muted">
               {productImages[0] ? (
-                <Image src={productImages[0]} alt={product.name} fill className="object-contain" />
+                <img
+                  src={productImages[0]}
+                  alt={product.name}
+                  className="absolute inset-0 h-full w-full object-contain"
+                />
               ) : null}
             </div>
             <div className="grid gap-4">
@@ -79,7 +82,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
                   key={`${image}-${index}`}
                   className="relative aspect-[4/3] overflow-hidden rounded-[1.5rem] border border-border/70 bg-muted"
                 >
-                  <Image src={image} alt={`${product.name} ${index + 2}`} fill className="object-contain" />
+                  <img
+                    src={image}
+                    alt={`${product.name} ${index + 2}`}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 h-full w-full object-contain"
+                  />
                 </div>
               ))}
             </div>
